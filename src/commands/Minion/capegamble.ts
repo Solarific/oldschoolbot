@@ -15,8 +15,8 @@ export default class extends BotCommand {
 			altProtection: true,
 			oneAtTime: true,
 			categoryFlags: ['minion'],
-			examples: ['+capegamble infernal', '+capegamble infernal'],
-			usage: '[fire|infernal]',
+			examples: ['+capegamble infernal', '+capegamble infernal', '+capegamble Skin'],
+			usage: '[fire|infernal|Skin]',
 			description: 'Allows you to gamble fire capes for a chance at the jad pet.'
 		});
 	}
@@ -24,17 +24,19 @@ export default class extends BotCommand {
 	async run(msg: KlasaMessage, [type]: ['fire' | 'infernal' | undefined]) {
 		const firesGambled = msg.author.settings.get(UserSettings.Stats.FireCapesSacrificed);
 		const infernalsGambled = msg.author.settings.get(UserSettings.Stats.InfernalCapesSacrificed);
-		if (!type) {
+		const skinsGambled = msg.author.settings.get(UserSettings.Stats.SkinsSacrificed);
+	if (!type) {
 			return msg.channel
-				.send(`You can gamble Fire capes and Infernal capes like this: \`${msg.cmdPrefix}capegamble fire/infernal\`
+				.send(`You can gamble Fire capes and Infernal capes, and Zuk skins like this: \`${msg.cmdPrefix}capegamble fire/infernal/skin\`
 
-**Fire Cape's Sacrificed:** ${firesGambled}
-**Infernal Cape's Gambled:** ${infernalsGambled}`);
+**Fire Cape's Gambled:** ${firesGambled}
+**Infernal Cape's Gambled:** ${infernalsGambled}
+**Skins Gambled:** ${skinsGambled}`);
 		}
 
-		const item = getOSItem(type === 'fire' ? 'Fire cape' : 'Infernal cape');
+		const item = getOSItem(type === 'fire' ? 'Fire cape' : 'Infernal cape' : "TzKal-Zuk's skin");
 		const key =
-			type === 'fire' ? UserSettings.Stats.FireCapesSacrificed : UserSettings.Stats.InfernalCapesSacrificed;
+			type === 'fire' ? UserSettings.Stats.FireCapesSacrificed : UserSettings.Stats.InfernalCapesSacrificed : UserSettings.Stats.SkinsSacrificed;
 
 		const capesOwned = await msg.author.bank().amount(item.id);
 
@@ -46,8 +48,8 @@ export default class extends BotCommand {
 		await msg.author.removeItemsFromBank(new Bank().add(item.id));
 		await msg.author.settings.update(key, newSacrificedCount);
 
-		const chance = type === 'fire' ? 200 : 100;
-		const pet = getOSItem(type === 'fire' ? 'Tzrek-Jad' : 'Jal-nib-rek');
+		const chance = type === 'fire' ? 200 : 100 : 175;
+		const pet = getOSItem(type === 'fire' ? 'Tzrek-Jad' : 'Jal-nib-rek' : 'Jal-MejJak');
 
 		if (roll(chance)) {
 			await msg.author.addItemsToBank(new Bank().add(pet.id), true);
@@ -64,6 +66,7 @@ export default class extends BotCommand {
 							type === 'fire'
 								? 'You lucky. Better train him good else TzTok-Jad find you, JalYt.'
 								: 'Luck be a TzHaar tonight. Jal-Nib-Rek is yours.',
+								: 'JalYt luck shines today, Jal-MejJak heal you good.',
 						head: type === 'fire' ? 'mejJal' : 'ketKeh'
 					})
 				]
@@ -79,6 +82,9 @@ export default class extends BotCommand {
 									newSacrificedCount
 							  )} time you gamble cape.`
 							: `No Jal-Nib-Rek for you. This is the ${formatOrdinal(
+									newSacrificedCount
+							  )} time you gamble cape.`,
+							: `Jal-MejJak did not join you. This is the ${formatOrdinal(
 									newSacrificedCount
 							  )} time you gamble cape.`,
 					head: type === 'fire' ? 'mejJal' : 'ketKeh'
