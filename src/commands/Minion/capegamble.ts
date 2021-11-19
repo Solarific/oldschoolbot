@@ -15,7 +15,7 @@ export default class extends BotCommand {
 			altProtection: true,
 			oneAtTime: true,
 			categoryFlags: ['minion'],
-			examples: ['+capegamble infernal', '+capegamble infernal', '+capegamble Skin'],
+			examples: ['+capegamble infernal', '+capegamble infernal', '+capegamble skin'],
 			usage: '[fire|infernal|Skin]',
 			description: 'Allows you to gamble fire capes for a chance at the jad pet.'
 		});
